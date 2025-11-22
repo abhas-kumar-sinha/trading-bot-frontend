@@ -194,17 +194,17 @@ const Navbar = () => {
     return (
         <nav className="w-full h-16 bg-background relative flex items-center justify-between">
             <img onClick={() => navigate("/")} className='dark:invert cursor-pointer' src={logo} />
-            <ButtonGroup className="absolute left-1/2 -translate-x-1/2 h-6">
-              <Button onClick={() => navigate("/")} variant="ghost" className={cn("min-w-20 h-6", location.pathname === "/" && "text-primary hover:text-primary")}>
-                <div className="w-2 h-2 mt-0.5 bg-green-500 rounded-full animate-pulse" />
+            <ButtonGroup className="absolute left-1/2 -translate-x-1/2">
+              <Button onClick={() => navigate("/")} variant="outline" className={cn("min-w-25", location.pathname === "/" && "text-primary hover:text-primary")}>
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                 Live
               </Button>
               <ButtonGroupSeparator />
-              <Button onClick={() => navigate("/defi")} variant="ghost" className={cn("min-w-20 h-6", location.pathname === "/defi" && "text-primary hover:text-primary")}>DeFi</Button>
+              <Button onClick={() => navigate("/defi")} variant="outline" className={cn("min-w-25", location.pathname === "/defi" && "text-primary hover:text-primary")}>DeFi</Button>
               <ButtonGroupSeparator />
-              <Button onClick={() => navigate("/opinion")} variant="ghost" className={cn("min-w-20 h-6", location.pathname === "/opinion" && "text-primary hover:text-primary")}>Opinion</Button>
+              <Button onClick={() => navigate("/opinion")} variant="outline" className={cn("min-w-25", location.pathname === "/opinion" && "text-primary hover:text-primary")}>Opinion</Button>
               <ButtonGroupSeparator />
-              <Button onClick={() => navigate("/perps")} variant="ghost" className={cn("min-w-20 h-6", location.pathname === "/perps" && "text-primary hover:text-primary")}>Perps</Button>
+              <Button onClick={() => navigate("/perps")} variant="outline" className={cn("min-w-25", location.pathname === "/perps" && "text-primary hover:text-primary")}>Perps</Button>
             </ButtonGroup>
             <div className="flex items-center w-full gap-x-4 justify-end">
                 {location.pathname.includes("defi") && <AlertDialog>
