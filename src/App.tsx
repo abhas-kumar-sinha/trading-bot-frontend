@@ -1,7 +1,7 @@
 import { HashRouter, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import Navbar from "./components/defi/layout/navbar";
+import Navbar from "./components/common/layout/navbar";
 
 // Pages
 import Defi from "./pages/Defi";

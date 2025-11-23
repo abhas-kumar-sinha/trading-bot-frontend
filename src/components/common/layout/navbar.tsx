@@ -366,12 +366,44 @@ const Navbar = () => {
                       <DropdownMenuLabel>
                         APIs
                       </DropdownMenuLabel>
-                      <DropdownMenuItem>
-                        GitHub
-                        <a className="ms-auto" href="https://github.com/abhas-kumar-sinha/trading-bot" target="_blank" rel="noopener noreferrer">
-                        <DropdownMenuShortcut><SquareArrowOutUpRight /></DropdownMenuShortcut>
-                        </a>
-                      </DropdownMenuItem>
+                      <DropdownMenuSub>
+                        <DropdownMenuSubTrigger>
+                          <span className="flex items-center gap-2">
+                            GITHUB
+                          </span>
+                        </DropdownMenuSubTrigger>
+
+                        <DropdownMenuPortal>
+                          <DropdownMenuSubContent sideOffset={6}>
+                            <DropdownMenuItem
+                              className="flex items-center gap-2"
+                            >
+                              Frontend
+                              <a className="ms-auto" href="https://github.com/abhas-kumar-sinha/trading-bot-frontend" target="_blank" rel="noopener noreferrer">
+                                <DropdownMenuShortcut><SquareArrowOutUpRight /></DropdownMenuShortcut>
+                              </a>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem
+                              className="flex items-center gap-2"
+                            >
+                              Backend-DeFi
+                              <a className="ms-auto" href="https://github.com/abhas-kumar-sinha/trading-bot-backend-defi" target="_blank" rel="noopener noreferrer">
+                                <DropdownMenuShortcut><SquareArrowOutUpRight /></DropdownMenuShortcut>
+                              </a>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem
+                              className="flex items-center gap-2"
+                            >
+                              Backend-opinion
+                              <a className="ms-auto" href="https://github.com/abhas-kumar-sinha/trading-bot-backend-opinion" target="_blank" rel="noopener noreferrer">
+                                <DropdownMenuShortcut><SquareArrowOutUpRight /></DropdownMenuShortcut>
+                              </a>
+                            </DropdownMenuItem>
+                          </DropdownMenuSubContent>
+                        </DropdownMenuPortal>
+                      </DropdownMenuSub>
                       <DropdownMenuItem>
                         VM
                         <a className="ms-auto" href="https://portal.azure.com/#@iitd.ac.in/resource/subscriptions/cfe26d18-e5c3-493a-ad1d-1bc34b937efc/resourceGroups/my-vm-group/providers/Microsoft.Compute/virtualMachines/bsc-trading-bot/connect" target="_blank" rel="noopener noreferrer">
