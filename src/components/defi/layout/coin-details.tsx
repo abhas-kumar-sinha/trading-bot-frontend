@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ArrowDownRight, ChevronDown } from "lucide-react";
+import { ArrowDownRight, ChevronDown, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppContext } from "@/contexts/AppContext";
 import {
@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/tooltip"
 import { ExchangeIcon } from '@web3icons/react'
 import { useCurrencyContext } from "@/contexts/CurrencyContext";
+import { Input } from "@/components/ui/input";
 
 type CoinDetails = {
     "Price": number | null;
@@ -91,7 +92,8 @@ const CoinDetails = () => {
         "Top 10": null,
     });
     const [percentChange24h, setPercentChange24h] = useState<number | null>(null);
-    const [botStats, setBotStats] = useState<BotStats>({uptime: null, lastChecked: null})
+    const [botStats, setBotStats] = useState<BotStats>({uptime: null, lastChecked: null});
+    const [searchCrypto, setSearchCrypto] = useState<string>("");
 
     const handleRadioChange = (value: string) => {
         const token = tokens.find((token) => token.contract_ticker_symbol === value);
@@ -103,6 +105,22 @@ const CoinDetails = () => {
                 logo_url: token.logo_url
             });
         }
+    }
+
+    const handleCoinSearch = () => {
+        fetch(`${import.meta.env.VITE_BOT_BASE_URL}/api/token/${searchCrypto}/details`)
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.data) {
+                    setShowCoin({
+                        contract_name: data.data.name,
+                        contract_address: data.data.contractAddress,
+                        contract_ticker_symbol: data.data.symbol,
+                        logo_url: data.data.icon
+                    });
+                }
+            })
+            .catch((err) => console.error("Binance fetch error:", err))
     }
 
     useEffect(() => {
@@ -176,12 +194,19 @@ const CoinDetails = () => {
                     </Button>
 
                 </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56 max-h-100">
-                    <DropdownMenuLabel>Crypto Coin</DropdownMenuLabel>
+                    <DropdownMenuContent align="start" className="w-60 max-h-100">
+                    <DropdownMenuLabel className="flex items-center gap-x-2">
+                        <Input value={searchCrypto} onChange={(e) => setSearchCrypto(e.target.value)} className="h-8" placeholder="Search Crypto..." />
+                        <Button onClick={handleCoinSearch} className="h-8 w-8">
+                            <Search />
+                        </Button>
+                    </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuRadioGroup value={showCoin.contract_ticker_symbol} onValueChange={(value) => handleRadioChange(value)}>
                         {tokens.map((token) => (
-                            <DropdownMenuRadioItem key={token.contract_address} value={token.contract_ticker_symbol}>{token.contract_ticker_symbol}</DropdownMenuRadioItem>
+                            <DropdownMenuRadioItem key={token.contract_address} value={token.contract_ticker_symbol}>
+                                {token.contract_ticker_symbol} ({token.contract_name})
+                            </DropdownMenuRadioItem>
                         ))}
                     </DropdownMenuRadioGroup>
                 </DropdownMenuContent>
