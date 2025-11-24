@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ArrowDownRight, ChevronDown, Search } from "lucide-react";
+import { ArrowDownRight, ChevronDown, Loader2, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppContext } from "@/contexts/AppContext";
 import {
@@ -94,6 +94,7 @@ const CoinDetails = () => {
     const [percentChange24h, setPercentChange24h] = useState<number | null>(null);
     const [botStats, setBotStats] = useState<BotStats>({uptime: null, lastChecked: null});
     const [searchCrypto, setSearchCrypto] = useState<string>("");
+    const [searching, setSearching] = useState<boolean>(false);
 
     const handleRadioChange = (value: string) => {
         const token = tokens.find((token) => token.contract_ticker_symbol === value);
@@ -108,6 +109,7 @@ const CoinDetails = () => {
     }
 
     const handleCoinSearch = () => {
+        setSearching(true);
         fetch(`${import.meta.env.VITE_BOT_BASE_URL}/api/token/${searchCrypto}/details`)
             .then((res) => res.json())
             .then((data) => {
@@ -118,9 +120,18 @@ const CoinDetails = () => {
                         contract_ticker_symbol: data.data.symbol,
                         logo_url: data.data.icon
                     });
+                    setSearchCrypto("")
+                } else {
+                    alert(`Invalid token: ${searchCrypto}`)
                 }
             })
-            .catch((err) => console.error("Binance fetch error:", err))
+            .catch((err) => {
+                alert(`Invalid token: ${searchCrypto}`)
+                console.error("Binance fetch error:", err)
+            })
+            .finally(() => {
+                setSearching(false);
+            })
     }
 
     useEffect(() => {
@@ -198,7 +209,7 @@ const CoinDetails = () => {
                     <DropdownMenuLabel className="flex items-center gap-x-2">
                         <Input value={searchCrypto} onChange={(e) => setSearchCrypto(e.target.value)} className="h-8" placeholder="Search Crypto..." />
                         <Button onClick={handleCoinSearch} className="h-8 w-8">
-                            <Search />
+                            {searching ? <Loader2 className="animate-spin" /> : <Search />}
                         </Button>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
