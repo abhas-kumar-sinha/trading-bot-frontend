@@ -259,8 +259,8 @@ const PortfolioCard = () => {
         return (
             <div className="border border-border rounded-xl w-110 bg-sidebar p-3 text-sidebar-foreground">
                 <div className="flex items-center justify-between w-full mb-2">
-                    <p>Swap Token</p>
-                    <Button variant="ghost" onClick={() => handleGoBack()}><ArrowLeft /></Button>
+                    <p className="ms-1 -mt-1">Swap Token</p>
+                    <Button variant="ghost" onClick={() => {setTrigger((prev) => prev + 1); handleGoBack()}}><ArrowLeft /></Button>
                 </div>
                 <div className="relative flex flex-col items-center gap-y-2 h-49">
                     <SwapDetails loading={loading} swapToken={swapToken} usdtToInrRate={usdtToInrRate!} />
