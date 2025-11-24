@@ -11,7 +11,7 @@ import {
   HistogramSeries,
   type HistogramSeriesOptions,
 } from "lightweight-charts";
-import { dynamicTokenData, staticTokenData } from "@/lib/TokenData";
+import { dynamicTokenData, getTokenMarkers, staticTokenData } from "@/lib/TokenData";
 import type { Token } from "@/contexts/AppContext";
 import { useCurrencyContext } from "@/contexts/CurrencyContext";
 
@@ -169,6 +169,8 @@ const CandleChart = ({ showCoin, theme, rate, timeInterval }: CandleChartProps) 
       
         staticTokenData(showCoin, timeInterval, rate, "candle", setIsLoading, series, volumeSeries);
         dynamicTokenData(showCoin, timeInterval, rate, "candle", series, volumeSeries);
+        getTokenMarkers(showCoin, series);
+        
       
         const handleResize = () => {
           if (chartContainerRef.current) {
