@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils"
 import { useEffect, useRef, useState } from "react";
 import SwapDetails from "./swap-details"
 import { useTheme } from "@/contexts/ThemeContext";
-import { getWalletBalance } from "@/lib/walletData";
+import { getRealTimeWalletUpdate, getWalletBalance } from "@/lib/walletData";
 
 export interface SwapToken {
     from: Token;
@@ -101,6 +101,26 @@ const PortfolioCard = () => {
     const primaryColor = rootStyles.getPropertyValue("--primary").trim();
     const backgroundColor = rootStyles.getPropertyValue("--background").trim();
     const foregroundColor = rootStyles.getPropertyValue("--foreground").trim();
+
+    const updateWalletBalance = async (lineSeries: ISeriesApi<'Line'>) => {
+        const { lastAmount, lastTimestamp } = await getWalletBalance(lineSeries);
+        
+        let currentAmount = lastAmount;
+        const currentTimestamp = lastTimestamp; // Keep timestamp fixed
+
+        // Initial real-time update
+        const result = await getRealTimeWalletUpdate(lineSeries, currentAmount, currentTimestamp);
+        currentAmount = result.amount;
+
+        // Periodic updates
+        const intervalId = setInterval(async () => {
+            const result = await getRealTimeWalletUpdate(lineSeries, currentAmount, currentTimestamp);
+            currentAmount = result.amount;
+        }, 10_000);
+
+        // Return cleanup function
+        return () => clearInterval(intervalId);
+    }
 
     useEffect(() => {
         const getWalletBlanceInterval = setInterval(() => {
@@ -210,7 +230,7 @@ const PortfolioCard = () => {
         },
         }) as ISeriesApi<"Line">;
             
-        getWalletBalance(lineSeries);
+        updateWalletBalance(lineSeries)
 
         // After setting data, fit the content to show all data starting from the left
         chart.timeScale().fitContent();
