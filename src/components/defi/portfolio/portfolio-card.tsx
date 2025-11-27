@@ -163,7 +163,8 @@ const PortfolioCard = () => {
             borderVisible: false,
         },
         timeScale: {
-            barSpacing: 6,
+            rightOffset:3,
+            barSpacing: 8,
             borderVisible: false,
             timeVisible: false,
             secondsVisible: false,
