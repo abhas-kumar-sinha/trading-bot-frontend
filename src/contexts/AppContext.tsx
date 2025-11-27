@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useRef, useEffect, type ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 
 export interface Token {
     contract_name: string;
@@ -15,18 +15,12 @@ export interface Token {
 interface AppContextType {
     showCoin: Partial<Token>;
     setShowCoin: React.Dispatch<React.SetStateAction<Partial<Token>>>;
-    latestCoinPrice: LatestCoinPrice;
     walletBalance: number | null;
     setWalletBalance: React.Dispatch<React.SetStateAction<number | null>>;
     address: string | null;
     setAddress: React.Dispatch<React.SetStateAction<string | null>>;
     tokens: Token[];
     setTokens: React.Dispatch<React.SetStateAction<Token[]>>;
-}
-
-interface LatestCoinPrice {
-    btc: number | null;
-    eth: number | null;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -38,14 +32,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         contract_ticker_symbol: "BNB",
         logo_url: "https://cdn.moralis.io/bsc/0x.png"
     });
-    const [latestCoinPrice, setLatestCoinPrice] = useState<LatestCoinPrice>({ btc: null, eth: null });
     const [walletBalance, setWalletBalance] = useState<number | null>(null);
     const [address, setAddress] = useState<string | null>(null);
     const [tokens, setTokens] = useState<Token[]>([]);
-
-    // Keep a ref to avoid stale closure in websocket event
-    const latestCoinPriceRef = useRef(latestCoinPrice);
-    latestCoinPriceRef.current = latestCoinPrice;
 
     useEffect(() => {
         const prev_address = localStorage.getItem("address");
@@ -55,39 +44,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [])
 
-    useEffect(() => {
-        const ws = new WebSocket(
-            "wss://stream.binance.com:9443/stream?streams=btcusdt@trade/ethusdt@trade"
-        );
-
-        ws.onmessage = (event) => {
-            try {
-                const data = JSON.parse(event.data);
-                if (data?.stream && data?.data?.p) {
-                    const symbol = data.data.s;
-                    const price = parseFloat(data.data.p);
-                    setLatestCoinPrice(prev => {
-                        if (symbol === "BTCUSDT") {
-                            return { ...prev, btc: price };
-                        } else if (symbol === "ETHUSDT") {
-                            return { ...prev, eth: price };
-                        }
-                        return prev;
-                    });
-                }
-            } catch (_) {
-                // Optionally handle error
-            }
-        };
-
-        return () => {
-            ws.close();
-        };
-    }, []);
-
     return (
         <AppContext.Provider value={{   showCoin, setShowCoin, 
-                                        latestCoinPrice, 
                                         walletBalance, setWalletBalance, 
                                         address, setAddress,
                                         tokens, setTokens

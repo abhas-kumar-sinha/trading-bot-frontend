@@ -105,7 +105,7 @@ const Navbar = () => {
       
         if (!tokens) return [];
 
-        const formatted = tokens.result.map((token: TokenApi) => ({
+        const formatted = tokens.result.filter((token: TokenApi) => token.token_address !== "0x64c6cdf0459ebd192c2f2db68e2df4f32e45ae94").map((token: TokenApi) => ({
             contract_name: token.name,
             contract_address: token.token_address,
             contract_ticker_symbol: token.symbol,
