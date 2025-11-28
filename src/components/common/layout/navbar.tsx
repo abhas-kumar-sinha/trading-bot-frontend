@@ -43,6 +43,7 @@ import { cn } from "@/lib/utils";
 interface TokenApi {
     name: string;
     token_address: string;
+    decimals: number;
     symbol: string;
     balance_formatted: number;
     usd_price: number;
@@ -56,7 +57,7 @@ const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { theme, setTheme } = useTheme();
-    const { address, setAddress, setWalletBalance, setTokens } = useAppContext();
+    const { address, setAddress, setWalletBalance, setTokens, setBnbToken, bnbToken } = useAppContext();
     const { currency, setCurrency, rateUpdateTrigger } = useCurrencyContext();
     const [csrfToken, setCsrfToken] = useState<string>('');
     const [cookie, setCookie] = useState<string>('');
@@ -105,10 +106,33 @@ const Navbar = () => {
       
         if (!tokens) return [];
 
-        const formatted = tokens.result.filter((token: TokenApi) => token.token_address !== "0x64c6cdf0459ebd192c2f2db68e2df4f32e45ae94").map((token: TokenApi) => ({
+        const bnbFormatted = tokens.result.filter((token: TokenApi) => (token.token_address === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" || token.symbol === "BNB")).map((token: TokenApi) => ({
             contract_name: token.name,
             contract_address: token.token_address,
             contract_ticker_symbol: token.symbol,
+            decimals: token.decimals,
+            balance: Number(token.balance_formatted),
+            quote: Number(token.balance_formatted) * token.usd_price,
+            quote_rate: token.usd_price,
+            quote_rate_24h: token.usd_price + token.usd_price_24hr_usd_change,
+            is_spam: token.possible_spam,
+            logo_url: token.logo ?? "",
+        }));
+
+        if (!bnbToken) {
+          setBnbToken(bnbFormatted[0])
+        }
+
+        const blocked = [
+          "0x64c6cdf0459ebd192c2f2db68e2df4f32e45ae94",
+          "0x955ac77fedee5f3aaa8b17b8ceb5dd64e94b63ba"
+        ];
+
+        const formatted = tokens.result.filter((token: TokenApi) => !blocked.includes(token.token_address)).map((token: TokenApi) => ({
+            contract_name: token.name,
+            contract_address: token.token_address,
+            contract_ticker_symbol: token.symbol,
+            decimals: token.decimals,
             balance: Number(token.balance_formatted),
             quote: Number(token.balance_formatted) * token.usd_price,
             quote_rate: token.usd_price,

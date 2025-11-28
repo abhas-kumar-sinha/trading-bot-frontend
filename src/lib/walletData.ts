@@ -89,8 +89,6 @@ export const getRealTimeWalletUpdate = async (
     // Calculate percentage change
     const percentageChange = Math.abs(((running - lastAmount) / lastAmount) * 100);
 
-    console.log(`Current value: ${running}, Last value: ${lastAmount}, Change: ${percentageChange.toFixed(2)}%`);
-
     // Only update if price moved > -1%
     if (percentageChange > -1) {
       // Update the LAST point (same timestamp) instead of adding new point
@@ -99,7 +97,6 @@ export const getRealTimeWalletUpdate = async (
         value: running,
       });
       
-      console.log('✅ Chart last point updated successfully - price moved > 5%');
       return { amount: running }; // Return new amount, keep same timestamp
     } else {
       console.log(`⚠️ Price change ${percentageChange.toFixed(2)}% < 5%, skipping update`);

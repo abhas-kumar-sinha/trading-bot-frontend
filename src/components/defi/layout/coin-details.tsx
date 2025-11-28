@@ -182,6 +182,12 @@ const CoinDetails = () => {
 
         return () => clearInterval(interval);
     }, [showCoin, usdtToInrRate]);
+
+    const handleSSHConnection = async () => {
+        await navigator.clipboard.writeText(
+        `ssh -i "C:\\Users\\Abhas Kumar Sinha\\Desktop\\Important Docs\\bsc-trading-bot_key.pem" bsc-trader@57.159.24.214`
+        );
+    }
     
     return (
         <div className="flex mt-2 gap-x-3">
@@ -254,9 +260,9 @@ const CoinDetails = () => {
                         </span>
                         <Tooltip>
                             <TooltipTrigger className="h-4">
-                                <a target="_blank" className="hover:text-primary text-muted-foreground" href="https://portal.azure.com/#@iitd.ac.in/resource/subscriptions/cfe26d18-e5c3-493a-ad1d-1bc34b937efc/resourceGroups/my-vm-group/providers/Microsoft.Compute/virtualMachines/bsc-trading-bot/connect">
+                                <button onClick={handleSSHConnection} className="hover:text-primary text-muted-foreground">
                                     <ArrowDownRight className="transform -rotate-90 animate-none!" />
-                                </a>
+                                </button>
                             </TooltipTrigger>
                             <TooltipContent>
                                 <p>Open SSH connection</p>

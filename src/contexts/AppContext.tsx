@@ -4,6 +4,7 @@ export interface Token {
     contract_name: string;
     contract_address: string;
     contract_ticker_symbol: string;
+    decimals: number;
     balance: number;
     quote: number;
     quote_rate: number;
@@ -21,6 +22,8 @@ interface AppContextType {
     setAddress: React.Dispatch<React.SetStateAction<string | null>>;
     tokens: Token[];
     setTokens: React.Dispatch<React.SetStateAction<Token[]>>;
+    bnbToken: Token | null;
+    setBnbToken: React.Dispatch<React.SetStateAction<Token | null>>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -35,6 +38,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const [walletBalance, setWalletBalance] = useState<number | null>(null);
     const [address, setAddress] = useState<string | null>(null);
     const [tokens, setTokens] = useState<Token[]>([]);
+    const [bnbToken, setBnbToken] = useState<Token | null>(null);
 
     useEffect(() => {
         const prev_address = localStorage.getItem("address");
@@ -48,7 +52,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         <AppContext.Provider value={{   showCoin, setShowCoin, 
                                         walletBalance, setWalletBalance, 
                                         address, setAddress,
-                                        tokens, setTokens
+                                        tokens, setTokens,
+                                        bnbToken, setBnbToken
                                     }}>
             {children}
         </AppContext.Provider>

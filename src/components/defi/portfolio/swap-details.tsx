@@ -1,52 +1,69 @@
-import { ChevronDown } from "lucide-react"
-import type { SwapToken } from "./portfolio-card"
-import { Skeleton } from "@/components/ui/skeleton"
+import type { Token } from "@/contexts/AppContext"
+import { Input } from "@/components/ui/input"
+import { cn } from "@/lib/utils";
+import type { CurrencyType } from "@/contexts/CurrencyContext";
 
-const SwapDetails = ({swapToken, usdtToInrRate, loading}: {swapToken: SwapToken, usdtToInrRate: number, loading: boolean}) => {
-    
-    if (loading) {
-        return (
-            <div className="w-full border border-border rounded-xl h-23.5 bg-background py-2 px-3">
-                <div className="flex items-center justify-between text-xs">
-                    <Skeleton className="h-[16px] w-[100px]" />
-                    <Skeleton className="h-[16px] w-[100px]" />
-                </div>
-                <div className="flex items-center justify-between text-2xl mt-2.5">
-                    <Skeleton className="h-[26px] w-[100px]" />
-                    <Skeleton className="h-[26px] w-[100px]" />
-                </div>
-                <div className="flex items-center justify-between text-xs mt-2.5">
-                    <Skeleton className="h-[16px] w-[100px]" />
-                    <Skeleton className="h-[16px] w-[100px]" />
-                </div>
-            </div>
-        )
+const SwapDetails = ({swapToken, side, amountToSell, setAmountToSell, rate, currency }: {swapToken: Token, side: "from" | "to", amountToSell: string, setAmountToSell: React.Dispatch<React.SetStateAction<string>>, rate: number, currency: CurrencyType}) => {
+        
+    const handleUseMax = () => {
+
+        if (swapToken.balance < 0.0001) {
+            setAmountToSell("0");
+            return;
+        }
+
+        setAmountToSell(swapToken.balance.toString());
+    }
+
+    const handleCopyAddress = () => {
+        navigator.clipboard.writeText(swapToken.contract_address);
     }
     
     return (
         <div className="w-full border border-border rounded-xl h-23.5 bg-background py-2 px-3">
             <div className="flex items-center justify-between text-xs">
-                <p>PAY</p>
-                <button className="text-xs text-primary underline-offset-4 hover:underline">Use Max</button>
+                <p>{side === "from" ? "PAY" : "RECEIVE"}</p>
+                {side === "from" && <button onClick={handleUseMax} className="text-xs text-primary underline-offset-4 hover:underline">Use Max</button>}
             </div>
             <div className="flex items-center justify-between mt-1.5 dark:text-amber-50 cursor-pointer">
-                <p className="text-2xl">₹{Math.round((swapToken.from.balance * usdtToInrRate!) * 100) / 100}</p>
+                <Input
+                    value={amountToSell}
+                    onChange={(e) => setAmountToSell(e.target.value)}
+                    disabled={side === "to"}
+                    type="number"
+                    className="
+                    -mt-1
+                    -ms-3
+                    me-2
+                    bg-transparent! 
+                    border-none 
+                    outline-none!
+                    ring-0
+                    focus:outline-none!
+                    focus:ring-0!
+                    focus:border-none!
+                    focus:shadow-none!
+                    text-3xl!
+                    placeholder:text-3xl!
+                    "
+                    placeholder="0"
+                />
                 <div className="flex items-center gap-x-1 border border-border rounded-full py-1 px-2">
                     <img
                         src={
-                            swapToken.from.logo_url!.includes("https://") 
-                            ? swapToken.from.logo_url 
-                            : `${import.meta.env.VITE_BOT_BASE_URL}/api/token-icon?url=${String(swapToken.from.logo_url).slice(1)}`}
+                            swapToken.logo_url.includes("https://") 
+                            ? swapToken.logo_url 
+                            : `${import.meta.env.VITE_BOT_BASE_URL}/api/token-icon?url=${String(swapToken.logo_url).slice(1)}`}
                         className="flex items-center justify-center rounded-full bg-gray-200 text-xs w-5 h-5 flex-shrink-0"
                     />
-                    <p>{swapToken.from.contract_ticker_symbol}</p>
-                    <ChevronDown size={12} />
+                    <p>{swapToken.contract_ticker_symbol}</p>
                 </div>
             </div>
             <div className="flex items-center justify-between text-xs mt-1.5">
-                <p>Balance</p>
-                <p>{swapToken.from.balance}</p>
+                <p>{currency === "inr" ? "₹" : "$"} {(Number(amountToSell) * swapToken.quote_rate * rate).toFixed(3)}</p>
+                {side === "from" ? <p className={cn(Number(amountToSell) > swapToken.balance ? "text-red-500" : "")}>{parseFloat(swapToken.balance.toFixed(7))}</p> : <p onClick={handleCopyAddress} className="text-xs text-foreground underline-offset-4 hover:underline cursor-pointer ms-auto w-fit">{(swapToken.contract_address).slice(0, 4) + "..." + (swapToken.contract_address).slice(-4)}</p>}
             </div>
+            
         </div>
     )
 }
