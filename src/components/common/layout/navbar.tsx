@@ -428,6 +428,38 @@ const Navbar = () => {
                           </DropdownMenuSubContent>
                         </DropdownMenuPortal>
                       </DropdownMenuSub>
+
+                      <DropdownMenuSub>
+                        <DropdownMenuSubTrigger>
+                          <span className="flex items-center gap-2">
+                            Aggregator
+                          </span>
+                        </DropdownMenuSubTrigger>
+
+                        <DropdownMenuPortal>
+                          <DropdownMenuSubContent sideOffset={6}>
+                            <DropdownMenuItem
+                              className="flex items-center gap-2"
+                            >
+                              1inch (SMW)
+                              <a className="ms-auto" href="https://business.1inch.com/portal/dashboard" target="_blank" rel="noopener noreferrer">
+                                <DropdownMenuShortcut><SquareArrowOutUpRight /></DropdownMenuShortcut>
+                              </a>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem
+                              className="flex items-center gap-2"
+                            >
+                              LiFi (ATC)
+                              <a className="ms-auto" href="https://portal.li.fi/integrations" target="_blank" rel="noopener noreferrer">
+                                <DropdownMenuShortcut><SquareArrowOutUpRight /></DropdownMenuShortcut>
+                              </a>
+                            </DropdownMenuItem>
+
+                          </DropdownMenuSubContent>
+                        </DropdownMenuPortal>
+                      </DropdownMenuSub>
+
                       <DropdownMenuItem>
                         VM
                         <a className="ms-auto" href="https://portal.azure.com/#@iitd.ac.in/resource/subscriptions/cfe26d18-e5c3-493a-ad1d-1bc34b937efc/resourceGroups/my-vm-group/providers/Microsoft.Compute/virtualMachines/bsc-trading-bot/connect" target="_blank" rel="noopener noreferrer">
