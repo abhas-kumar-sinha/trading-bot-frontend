@@ -1,4 +1,12 @@
-import { ArrowLeft, ArrowUpDown, ChevronUpCircleIcon, RefreshCcw } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { ArrowLeft, ArrowUpDown, ChevronRight, ChevronUpCircleIcon, RefreshCcw } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { createChart, ColorType, CrosshairMode, LineSeries, type UTCTimestamp, type Time, type ISeriesApi } from "lightweight-charts";
 import { useAppContext, type Token } from "@/contexts/AppContext"
@@ -101,6 +109,7 @@ const PortfolioCard = () => {
     const { theme } = useTheme();
     const [trigger, setTrigger] = useState(0);
     const [results, setResults] = useState<Quote[]>([]);
+    const [selectedProvider, setSelectedProvider] = useState<Quote | null>(null);
     const [swapToken, setSwapToken] = useState<SwapToken>({
         from: createEmptyToken(),
         to: createEmptyToken(),
@@ -271,6 +280,9 @@ const PortfolioCard = () => {
                     )
                     );
 
+                    const bestQuote = transformed.sort((a: Quote, b: Quote) => a.price - b.price)[0];
+
+                    setSelectedProvider(bestQuote);
                     setResults(transformed);
                 }
             })
@@ -321,6 +333,7 @@ const PortfolioCard = () => {
         });
         setAmountToSell("");
         setResults([]);
+        setSelectedProvider(null);
         setLoadingQuote(false);
         
         // Abort any pending requests
@@ -544,24 +557,77 @@ const PortfolioCard = () => {
                     </Button>
                     <SwapDetails swapToken={swapToken.to} side="to" amountToSell={results.length > 0 ? results[0].buyAmountHuman: "0"} setAmountToSell={setAmountToSell} rate={usdtToInrRate!} currency={currency} />
                 </div>
-                <div className="text-xs mt-4 flex flex-col gap-y-1 tracking-wider">
+                <div className="text-xs mt-2.5 mb-3 flex flex-col gap-y-1.5 tracking-wider">
                     {loadingQuote ? (
                         <>
-                            <p className="flex items-center justify-between"><span>Provider</span> <Skeleton className="h-[16px] w-[100px]" /></p>
-                            <p className="flex items-center justify-between"><span>Price</span> <Skeleton className="h-[16px] w-[100px]" /></p>
-                            <p className="flex items-center justify-between"><span>Fees</span> <Skeleton className="h-[16px] w-[100px]" /></p>
-                            <p className="flex items-center justify-between"><span>Slippage</span> <Skeleton className="h-[16px] w-[100px]" /></p>
+                            <p className="flex items-center justify-between"><span>Provider</span> <Skeleton className="h-[21px] w-[100px]" /></p>
+                            <p className="flex items-center justify-between"><span>Price</span> <Skeleton className="h-[17px] w-[100px]" /></p>
+                            <p className="flex items-center justify-between"><span>Fees</span> <Skeleton className="h-[17px] w-[100px]" /></p>
+                            <p className="flex items-center justify-between"><span>Slippage</span> <Skeleton className="h-[17px] w-[100px]" /></p>
                         </>
                     ) : (
                         <>
-                            <p className="flex items-center justify-between"><span>Provider</span> <span>{results.length > 0 ? results[0].provider : "-"}</span></p>
-                            <p className="flex items-center justify-between"><span>Price</span> <span>{results.length > 0 ? results[0].priceText : "-"}</span></p>
-                            <p className="flex items-center justify-between"><span>Fees</span> <span>{results.length > 0 && currency === "inr" ? "₹" : "$"} {results.length > 0 ? results[0].gasCostUSD : "-"}</span></p>
-                            <p className="flex items-center justify-between"><span>Slippage</span> <span>{results.length > 0 ? results[0].slippageText : "-"}</span></p>
+                            <p className="flex items-center justify-between">
+                                <span>Provider</span> 
+                                <div className="flex items-center gap-x-1">
+                                <span>{selectedProvider ? selectedProvider.provider : "-"}</span>
+                                {results.length > 1 && 
+                                <Dialog>
+                                    <DialogTrigger>
+                                        <Button variant="ghost" className="h-6 w-4">
+                                            <ChevronRight size={14} />
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent className="w-92 px-2 pb-2">
+                                        <DialogHeader>
+                                            <DialogTitle className="-mt-2 text-center">Select A Quote</DialogTitle>
+                                        </DialogHeader>
+                                        <DialogDescription>
+                                            <div className="flex items-center justify-between text-md px-4">
+                                                <span>Net cost</span>
+                                                <span>Time</span>
+                                            </div>
+                                            <div className="flex flex-col mt-2 gap-y-1">
+                                                {results.map((result) => (
+                                                    <div key={result.allowanceTarget} className={cn("w-full flex items-center justify-between cursor-pointer py-1.5 pe-2 ps-1", result.allowanceTarget === selectedProvider!.allowanceTarget ? "bg-primary/30" : "hover:bg-sidebar")} onClick={() => {
+                                                        setSelectedProvider(result);
+                                                    }}>
+                                                        <div className="flex items-center gap-x-2">
+                                                            <div className={cn("w-0.5 h-16 rounded-full", result.allowanceTarget === selectedProvider!.allowanceTarget && "bg-primary")} />
+                                                            <div className="flex flex-col">
+                                                                <span className="text-[16px] text-white/90">{Number(result.buyAmountHuman).toFixed(3)} {swapToken.to.contract_ticker_symbol}</span>
+                                                                <span>{currency === "inr" ? "₹" : "$"} {(Number(result.buyAmountHuman) * swapToken.to.quote_rate * usdtToInrRate!).toFixed(5)}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex flex-col items-end gap-x-2">
+                                                            <span className="text-white/90">{"< 1 min"}</span>
+                                                            <span>{result.provider}</span>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </DialogDescription>
+                                    </DialogContent>
+                                </Dialog>
+                                }
+                                </div>
+                            </p>
+                            <p className="flex items-center justify-between">
+                                <span>Price</span> 
+                                <span>{selectedProvider ? selectedProvider.priceText : "-"}</span>
+                            </p>
+                            <p className="flex items-center justify-between">
+                                <span>Fees</span> 
+                                <span>{selectedProvider ? (currency === "inr" ? "₹" : "$") : ""} {selectedProvider ? selectedProvider.gasCostUSD : "-"}</span>
+                            </p>
+                            <p className="flex items-center justify-between">
+                                <span>Slippage</span> 
+                                <span>{selectedProvider ? selectedProvider.slippageText : "-"}</span>
+                            </p>
                         </>
                     )}
                 </div>
-                <div className="w-full mt-4.5">
+                <div className="w-full">
                     <Button className="w-full" disabled={loadingQuote || results.length === 0}>Swap</Button>
                 </div>
             </div>
