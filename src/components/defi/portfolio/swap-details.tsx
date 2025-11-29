@@ -38,7 +38,8 @@ const SwapDetails = ({swapToken, side, amountToSell, setAmountToSell, rate, curr
                     bg-transparent! 
                     border-none 
                     outline-none!
-                    ring-0
+                    ring-0!
+                    shadow-none!
                     focus:outline-none!
                     focus:ring-0!
                     focus:border-none!

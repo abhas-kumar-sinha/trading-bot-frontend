@@ -595,12 +595,12 @@ const PortfolioCard = () => {
                                                         <div className="flex items-center gap-x-2">
                                                             <div className={cn("w-0.5 h-16 rounded-full", result.allowanceTarget === selectedProvider!.allowanceTarget && "bg-primary")} />
                                                             <div className="flex flex-col">
-                                                                <span className="text-[16px] text-white/90">{Number(result.buyAmountHuman).toFixed(3)} {swapToken.to.contract_ticker_symbol}</span>
+                                                                <span className="text-[16px] dark:text-white/70 text-black/70 font-semibold">{Number(result.buyAmountHuman).toFixed(3)} {swapToken.to.contract_ticker_symbol}</span>
                                                                 <span>{currency === "inr" ? "₹" : "$"} {(Number(result.buyAmountHuman) * swapToken.to.quote_rate * usdtToInrRate!).toFixed(5)}</span>
                                                             </div>
                                                         </div>
                                                         <div className="flex flex-col items-end gap-x-2">
-                                                            <span className="text-white/90">{"< 1 min"}</span>
+                                                            <span className="dark:text-white/70 text-black/70 font-semibold">{"< 1 min"}</span>
                                                             <span>{result.provider}</span>
                                                         </div>
                                                     </div>
