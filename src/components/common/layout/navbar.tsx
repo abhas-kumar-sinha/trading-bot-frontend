@@ -484,7 +484,7 @@ const Navbar = () => {
                       </DropdownMenuItem>
                       <DropdownMenuItem>
                         Database
-                        <a className="ms-auto" href="https://console.neon.tech/app/projects/wandering-field-73554128/branches/br-empty-fire-a1sl7f6g/tables" target="_blank" rel="noopener noreferrer">
+                        <a className="ms-auto" href="https://console.neon.tech/app/projects/ancient-tooth-08902969/branches/br-cool-lake-a1a4dgyt/tables" target="_blank" rel="noopener noreferrer">
                         <DropdownMenuShortcut><SquareArrowOutUpRight /></DropdownMenuShortcut>
                         </a>
                       </DropdownMenuItem>
