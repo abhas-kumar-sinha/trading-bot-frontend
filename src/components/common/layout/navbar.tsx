@@ -130,6 +130,7 @@ const Navbar = () => {
           "0x22d150642734734fa2e4d9b251af95ea38c89f0c",
           "0xb4abed79d90de6e800b9ee0adae166c8eb7e9a76",
           "0x5f058e67f1bc6292ecc25c923c1be1d2a54486a5",
+          "0x5707c78c86eb3e1c121fd79e6b38a5c2ca835e72"
         ];
 
         const formatted = tokens.result.filter((token: TokenApi) => !blocked.includes(token.token_address)).map((token: TokenApi) => ({
