@@ -66,15 +66,15 @@ const Transactions = () => {
                     </TabsList>
                 </div>
 
-                <TabsContent value="kol" className="h-full">
+                <TabsContent value="kol" className="h-full relative mb-3">
                     <TransactionTable transactionData={kolTransactionData} />
                 </TabsContent>
 
-                <TabsContent value="smart" className="h-full">
+                <TabsContent value="smart" className="h-full relative mb-3">
                     <TransactionTable transactionData={smartTransactionData} />
                 </TabsContent>
 
-                <TabsContent value="following" className="h-full">
+                <TabsContent value="following" className="h-full relative mb-3">
                     <TransactionTable transactionData={followingTransactionData} />
                 </TabsContent>
             </Tabs>
