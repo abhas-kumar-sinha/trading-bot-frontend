@@ -59,24 +59,82 @@ function formatTime(secondsString: string): string {
   }
 }
 
-function formatPrice(price: number | null) {
-    if (price === null || price === undefined || isNaN(price)) return "-";
-  
-    if (price >= 1) {
-      // Show 2 decimals for normal prices
-      return price.toFixed(2);
-    } else if (price >= 0.1) {
-      return price.toFixed(3);
-    } else if (price >= 0.01) {
-      return price.toFixed(4);
-    } else if (price >= 0.001) {
-      return price.toFixed(5);
-    } else if (price >= 0.0001) {
-      return price.toFixed(6);
-    } else {
-      // For ultra-small prices, show up to 8 decimals but strip trailing zeros
-      return parseFloat(price.toFixed(8)).toString();
-    }
+type Opts = {
+  maxSmallSignificant?: number;
+  maxSmallDecimals?: number;
+  maxTinyPower?: number;
+  thousands?: boolean;
+  // NEW:
+  showFullLeadingZeros?: boolean;   // default false -> compress zeros
+  maxVisibleLeadingZeros?: number;  // when showFullLeadingZeros=false, show up to this many zeros before sub
+};
+
+function formatPriceWithSubscript(
+  price: number | null | undefined,
+  opts: Opts = {}
+): React.ReactNode {
+  const {
+    maxSmallSignificant = 8,
+    maxSmallDecimals = 12,
+    maxTinyPower = 12,
+    thousands = true,
+    showFullLeadingZeros = false,
+    maxVisibleLeadingZeros = 1, // default: show a single 0 before the <sub>
+  } = opts;
+
+  if (price === null || price === undefined || Number.isNaN(price)) return "-";
+  if (!Number.isFinite(price)) return price > 0 ? "∞" : "-∞";
+
+  const sign = price < 0 ? "-" : "";
+  const abs = Math.abs(price);
+
+  if (abs >= 1) {
+    const nf = new Intl.NumberFormat(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+      useGrouping: thousands,
+    });
+    return <>{sign}{nf.format(abs)}</>;
+  }
+
+  if (abs === 0) return "0";
+  if (abs < Math.pow(10, -maxTinyPower)) {
+    return <>{sign}&lt; 1e-{maxTinyPower}</>;
+  }
+
+  // Build a stable fixed representation with enough decimals, then trim trailing zeros
+  const fixed = abs.toFixed(maxSmallDecimals).replace(/0+$/, "");
+  const normalized = fixed.endsWith(".") ? fixed + "0" : fixed;
+
+  const m = normalized.match(/^0\.(0*)(\d.*)$/);
+  if (!m) return <>{sign}{normalized}</>;
+
+  const leadingZeros = m[1].length;
+  const significant = m[2];
+
+  // truncate significant part to reasonable length
+  const sigTrunc = significant.slice(0, maxSmallSignificant);
+
+  const index = leadingZeros + 1;
+
+  // Decide how many visible zeros to show before the <sub>
+  let visibleZeros = "";
+  if (showFullLeadingZeros) {
+    visibleZeros = "0".repeat(leadingZeros);
+  } else {
+    visibleZeros = leadingZeros > 0 ? "0".repeat(Math.min(maxVisibleLeadingZeros, leadingZeros)) : "";
+  }
+
+
+  return (
+    <>
+      {sign}
+      0.
+      {visibleZeros}
+      <sub style={{ fontVariantNumeric: "normal" }}>{index}</sub>
+      {sigTrunc.slice(0, 4)}
+    </>
+  );
 }
 
 const CoinDetails = () => {
@@ -237,7 +295,7 @@ const CoinDetails = () => {
                         <span className="text-xs text-muted-foreground">{key}</span>
                         <span className="text-sm dark:text-amber-50">
                             {key === "Top 10" ? "" : currency === "inr" ? "₹" : "$"}
-                            {key === "Price" ? formatPrice(coinDetails[key]!) : formatNumber(coinDetails[key] ?? 0)} 
+                            {key === "Price" ? formatPriceWithSubscript(coinDetails[key]!) : formatNumber(coinDetails[key] ?? 0)} 
                             {key === "Top 10" && !isNaN(coinDetails[key]!) && "%"}
                             {key === "Price" && <span className={cn("text-xs text-muted-foreground", (percentChange24h ?? 0) > 0 ? "text-green-500" : "text-red-500")}>&nbsp;({(percentChange24h ?? 0) > 0 ? "+" : ""}{percentChange24h + '%'})</span>}
                         </span>

@@ -160,11 +160,10 @@ export const getTokenMarkers = async (
 
     const markers: SeriesMarker<Time>[] = [];
 
-    const IST_OFFSET_SEC = 5.5 * 3600
 
     for (const pos of allPositions) {
         if (pos.entryTimestamp && pos.entryPrice) { 
-        const time = (toSeconds(pos.entryTimestamp) + IST_OFFSET_SEC) as UTCTimestamp;
+        const time = (toSeconds(pos.entryTimestamp)) as UTCTimestamp;
 
         markers.push({
             time,
@@ -176,7 +175,7 @@ export const getTokenMarkers = async (
         }
 
         if (pos.exitTimestamp && pos.exitPrice) {
-        const time = (toSeconds(pos.exitTimestamp) + IST_OFFSET_SEC) as UTCTimestamp;
+        const time = (toSeconds(pos.exitTimestamp)) as UTCTimestamp;
 
         markers.push({
             time,
