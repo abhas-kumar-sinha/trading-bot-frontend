@@ -122,12 +122,14 @@ const CandleChart = ({ showCoin, theme, rate, timeInterval }: CandleChartProps) 
             maximumFractionDigits: decimals,
           });
         };
+
+        const IST = new Date().getTimezoneOffset();
       
         chart.applyOptions({
           localization: {
             timeFormatter: (time: Time) => {
               if (typeof time === "number") {
-                const date = new Date((time as UTCTimestamp) * 1000);
+                const date = new Date((time as UTCTimestamp + IST) * 1000);
                 return date.toLocaleTimeString("en-IN", {
                   timeZone: "UTC",
                   hour12: false,
