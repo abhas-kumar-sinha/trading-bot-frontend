@@ -392,7 +392,7 @@ const PortfolioCard = () => {
             if (isMountedRef.current) {
                 setTrigger((prev) => prev + 1);
             }
-        }, 60_000);
+        }, 600_000);
 
         return () => clearInterval(getWalletBalanceInterval);
     }, []);
@@ -646,7 +646,7 @@ const PortfolioCard = () => {
                         <p className="text-5xl mt-1 text-primary">
                             {currency === "inr" ? "₹" : "$"}{Math.round((walletBalance * usdtToInrRate) * 100) / 100}
                         </p>
-                        <Button variant="ghost" className="mt-4" onClick={() => setRateUpdateTrigger((prev) => prev + 1)}>
+                        <Button variant="ghost" className="mt-4" onClick={() => {setRateUpdateTrigger((prev) => prev + 1); setTrigger((prev) => prev + 1)}}>
                             <RefreshCcw size={11} />
                         </Button>
                     </>
