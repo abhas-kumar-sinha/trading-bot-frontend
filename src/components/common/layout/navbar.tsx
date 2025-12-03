@@ -130,7 +130,7 @@ const Navbar = () => {
           "0x3ed18f61be1d19b49f97739a127dceafdeeccbe5"
         ];
 
-        const formatted = tokens.result.filter((token: TokenApi) => !blocked.includes(token.token_address)).map((token: TokenApi) => ({
+        const formatted = tokens.filter((token: TokenApi) => !blocked.includes(token.token_address)).map((token: TokenApi) => ({
             contract_name: token.name,
             contract_address: token.token_address,
             contract_ticker_symbol: token.symbol,
