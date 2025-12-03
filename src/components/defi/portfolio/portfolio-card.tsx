@@ -254,10 +254,27 @@ const PortfolioCard = () => {
         abortControllerRef.current = ac;
         setLoadingQuote(true);
 
+        function trimToDecimals(value: string, decimals: number) {
+        // handle empty / invalid
+        if (!value || value === ".") return "0";
+
+        if (!value.includes(".")) return value; // no decimals -> safe
+
+        const [int, frac] = value.split(".");
+        if (frac.length <= decimals) return value; // already fine
+
+        // truncate extra decimals (or implement rounding here if you want)
+        const trimmedFrac = frac.slice(0, decimals);
+        // Avoid trailing '.' (e.g. "1.")
+        return trimmedFrac.length ? `${int}.${trimmedFrac}` : int;
+        }
+
+        const cleanedAmount = trimToDecimals(debouncedQuery, swapToken.from.decimals);
+
         const swapParams = {
             src: swapToken.from.contract_address,
             dst: swapToken.to.contract_address,
-            amount: parseUnits(debouncedQuery, swapToken.from.decimals).toString(),
+            amount: parseUnits(cleanedAmount, swapToken.from.decimals).toString(),
             from: address || "",
         };
 
