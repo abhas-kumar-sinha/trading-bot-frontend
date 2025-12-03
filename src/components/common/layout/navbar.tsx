@@ -92,21 +92,17 @@ const Navbar = () => {
         setWalletBalance(0);
     };
 
-    async function getAllTokens(walletAddress: string, moralisApiKey: string) {
-        const url = `https://deep-index.moralis.io/api/v2.2/wallets/${walletAddress}/tokens?chain=bsc`;
+    async function getAllTokens(walletAddress: string, chain: string) {
+        const url = `${import.meta.env.VITE_BOT_BASE_URL}/api/wallet-tokens/${walletAddress}/${chain}`;
       
-        const res = await fetch(url, {
-            headers: {
-              "accept": "application/json",
-              "X-API-Key": moralisApiKey
-            }
-          });
+        const res = await fetch(url);
         
-        const tokens = await res.json();
+        const data = await res.json();
+        const tokens = data.data;
       
         if (!tokens) return [];
 
-        const bnbFormatted = tokens.result.filter((token: TokenApi) => (token.token_address === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" || token.symbol === "BNB")).map((token: TokenApi) => ({
+        const bnbFormatted = tokens.filter((token: TokenApi) => (token.token_address === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" || token.symbol === "BNB")).map((token: TokenApi) => ({
             contract_name: token.name,
             contract_address: token.token_address,
             contract_ticker_symbol: token.symbol,
@@ -196,10 +192,10 @@ const Navbar = () => {
     }, [copying]);
 
     useEffect(() => {
-        getAllTokens(address!, import.meta.env.VITE_MORALIS_API_KEY);
+        getAllTokens(address!, "bsc");
 
         const interval = setInterval(() => {
-            getAllTokens(address!, import.meta.env.VITE_MORALIS_API_KEY);
+            getAllTokens(address!, "bsc");
         }, 120_000); // 120 seconds
 
         return () => clearInterval(interval);
