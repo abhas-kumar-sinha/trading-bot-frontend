@@ -98,7 +98,7 @@ const Navbar = () => {
         const res = await fetch(url);
         
         const data = await res.json();
-        const tokens = data.data;
+        const tokens = data.data.result;
       
         if (!tokens) return [];
 
