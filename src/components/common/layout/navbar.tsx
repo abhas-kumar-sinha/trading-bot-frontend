@@ -487,6 +487,12 @@ const Navbar = () => {
                         <DropdownMenuShortcut><SquareArrowOutUpRight /></DropdownMenuShortcut>
                         </a>
                       </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        Email
+                        <a className="ms-auto" href="https://resend.com/emails" target="_blank" rel="noopener noreferrer">
+                        <DropdownMenuShortcut><SquareArrowOutUpRight /></DropdownMenuShortcut>
+                        </a>
+                      </DropdownMenuItem>
                     </DropdownMenuGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
