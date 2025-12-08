@@ -62,7 +62,7 @@ const TransactionTable = ({transactionData}: {transactionData: SmartMoneyTransac
     }
 
     return (
-        <div className={cn("absolute rounded-xl bg-accent text-accent-foreground h-full flex w-full mt-3 p-3 hide-scrollbar", transactionData.length === 0 && "h-[96.7%]")}>
+        <div className={cn("absolute rounded-xl bg-accent text-accent-foreground h-full flex w-full mt-3 p-3 hide-scrollbar")}>
         <Table className="table-fixed">
             <TableHeader>
                 <TableRow>
